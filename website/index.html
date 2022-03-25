@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kockapóker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Layer -->
+    <div class="layer"></div>
+
+    <!-- Header & Navigation -->
+
+    <header>
+        <div class="title">
+            <h1>Kockapóker</h1>
+        </div>
+        <nav>
+            <a href="#combinations">Érvényes kombinációk</a>
+            <a href="#program">Program használata</a>
+        </nav>
+    </header>
+
+    <!-- Rules Section -->
+
+    <section class="rules">
+        <h2>Szabályzat</h2>
+        <p>A játékot 5 darab 6 oldalú dobókockával játsszuk, és a játékosok felváltva dobnak az összes kockával.
+            Minden dobás után a játékosnak ki kell töltenie a lentebb megadott szerkezetű táblázat valamely
+            mezőjét. Ha a dobása megfelel az adott mező szabályának, akkor beírja oda a dobott kombinációban
+            szereplő kockák pontértékét (például, ha van 2 db 3-as a dobások között, a párhoz beírhat 6 pontot).</p>
+        <p>Csak üres mezőbe lehet beírni, azaz, ha egy mezőt kitöltünk, azt az adott játékban már nem lehet
+            megváltoztatni. Ha egy eredmény többféle kombinációnak is megfelel, akkor a játékos eldönti, hogy
+            melyiket választja (például 4 db 1-est lehet párnak is írni 2 pontért, vagy drillnek 3 pontért, vagy kis
+            pókernek 4 pontért).</p>
+        <p>Lehetséges, hogy egyik kombinációnak sem felelnek meg a kidobott értékek.
+            Ilyenkor is ki kell választani egy mezőt, és oda 0 pontot írni.
+            A játéknak akkor van vége, amikor minden játékos kitöltötte a táblázat minden mezőjét. Ekkor
+            összeszámoljuk a pontértékeket és az győz, aki a legnagyobb pontszámot érte el.</p>
+    </section>
+
+    <section class="combinations" id="combinations">
+        <h2>Érvényes kombinációk</h2>
+        <div class="combination">Szemét - <b>tetszőleges kombinációban az 5 kocka pontértékeinek összege</b></div>
+        <div class="combination">2 egyforma / pár - <b>két egyforma érték összege</b></div>
+        <div class="combination">3 egyforma / drill - <b>három egyforma érték összege</b></div>
+        <div class="combination">2 pár - <b>két különböző értékből két-két egyforma érték összege</b></div>
+        <div class="combination">4 egyforma / kis póker - <b>négy egyforma érték összege</b></div>
+        <div class="combination">2 + 3 egyforma / full - <b>két egyforma érték és három másik egyforma érték összege</b></div>
+        <div class="combination">Kis sor - 1,2,3,4,5-ös értékek - <b>15 pont</b></div>
+        <div class="combination">Nagy sor – 2,3,4,5,6-os értékek - <b>20 pont</b></div>
+        <div class="combination">5 egyforma / nagy póker - öt egyforma érték - <b>50 pont</b></div>
+    </section>
+
+</body>
+
+</html>

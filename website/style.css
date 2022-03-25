@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+/* Basic styles */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+a{
+    color: #fff;
+    text-decoration: none;
+    font-size: 28px;
+}
+
+section{
+    width: 80%;
+    margin: auto;
+}
+
+section h2{
+    font-size: 38px;
+    margin-bottom: 15px;
+}
+section p{
+    line-height: 1.5;
+    font-size: 22px;
+}
+
+.layer{
+    position: fixed;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('bg.jpg');
+    background-position: top left;
+    background-size: cover;
+}
+
+/* Header styles */
+
+header{
+    display: flex;
+    width: 80%;
+    margin: 40px auto 0 auto;
+    align-items: center;
+}
+
+header .title h1{
+    font-size: 64px;
+}
+
+header nav{
+    flex-basis: 80%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+/* Rules' styles */
+
+section.rules{
+    margin-top: 60px;
+}
+
+/* Combinations' styles */
+section.combinations{
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+section.combinations .combination{
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 20px;
+    font-size: 24px;
+    align-self: flex-start;
+    text-align: center;
+    border-radius: 40px;
+    color: #000;
+    background-color: rgba(255, 255, 255, 0.7);
+    transition: all 0.5s;
+}
+section.combinations .combination:hover{
+    color: #fff;
+    background-color: #000;
+    cursor: pointer;
+}

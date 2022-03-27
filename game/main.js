@@ -137,6 +137,9 @@ function check_throw_values(throws) {
         }
     }
     if (noDuplicates.length === 1) {
+        scores.add_score("two_in_row", pc.calculate_two_in_row())
+        scores.add_score("three_in_row", pc.calculate_three_in_row())
+        scores.add_score("four_in_row", pc.calculate_four_in_row())
         scores.add_score("yahtzee", pc.calculate_yahtzee())
     }
     scores.add_score("trash", pc.calculate_trash())
@@ -150,4 +153,3 @@ function get_throw() {
     }
      return throws;
 }
-

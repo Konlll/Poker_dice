@@ -49,14 +49,12 @@ class PointCalculator {
         for (let i = 0; i < this.throws.length - 1; i++) {
             if (this.throws[i] === this.throws[i + 1] && this.throws[i + 1] === this.throws[i + 2]) {
                 return this.throws[i] + this.throws[i + 1] + this.throws[i + 2];
-            } else {
-                return 0;
             }
         }
+        return 0;
     }
 
     calculate_four_in_row() {
-        let sum = 0;
         for (let i = 0; i < this.throws.length; i++) {
             if (this.throws[i] === this.throws[i+1]) {
                 this.throws.splice(i-1, 1)
@@ -66,11 +64,14 @@ class PointCalculator {
     }
 
     calculate_two_pairs() {
-        let arr = new Array(4);
-        for (let i = 0; i< this.throws.length; i++) {
-            if (this.throws[i] === this.throws[i+1]) {
+        let arr = []
+        for (let i = 0; i < this.throws.length; i++) {
+            if (this.throws[i] === this.throws[i + 1]) {
                 arr.push(this.throws[i]);
-                arr.push(this.throws[i+1]);
+                arr.push(this.throws[i + 1]);
+            }
+            if (arr.length === 4) {
+                break
             }
         }
         return sum_arr(arr);
@@ -116,6 +117,9 @@ function check_throw_values(throws) {
         }
     }if (noDuplicates.length === 2) {
         if (duplicates.length === 2) {
+            scores.add_score('two_in_row', pc.calculate_two_in_row());
+            scores.add_score("three_in_row", pc.calculate_three_in_row())
+            scores.add_score("two_pairs", pc.calculate_two_pairs())
             scores.add_score('full', pc.calculate_full());
         } else {
             scores.add_score('four_in_row', pc.calculate_four_in_row());
@@ -123,13 +127,16 @@ function check_throw_values(throws) {
     }
     if (noDuplicates.length === 4) {
         scores.add_score('two_in_row', pc.calculate_two_in_row());
-    } if (noDuplicates.length === 3) {
+    }
+    if (noDuplicates.length === 3) {
         if (duplicates.length === 2) {
-            scores.add_score("three_in_row", pc.calculate_three_in_row())
-        } else {
+            scores.add_score("two_in_row", pc.calculate_two_in_row())
             scores.add_score("two_pairs", pc.calculate_two_pairs())
+        } else {
+            scores.add_score("three_in_row", pc.calculate_three_in_row())
         }
-    }if (noDuplicates.length === 1) {
+    }
+    if (noDuplicates.length === 1) {
         scores.add_score("yahtzee", pc.calculate_yahtzee())
     }
     scores.add_score("trash", pc.calculate_trash())

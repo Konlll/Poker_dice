@@ -1,11 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="main.js"></script>
+    <title>Kockapóker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
 
+<body>
+    <div class="layer"></div>
+
+    <div class="random-numbers">
+        <span>?</span>
+        <span>?</span>
+        <span>?</span>
+        <span>?</span>
+        <span>?</span>
+    </div>
+
+    <div class="button-container">
+        <button>Random számok generálása</button>
+    </div>
+
+    <div class="combinations">
+        <h2>Számítógép pontszáma: ###</h2>
+        <div class="combination">
+            <div class="row">
+                <div class="item">Szemét</div>
+                <div class="item">Pár</div>
+                <div class="item">Drill</div>
+                <div class="item">2 pár</div>
+                <div class="item">Kis póker</div>
+                <div class="item">Full</div>
+                <div class="item">Kis sor</div>
+                <div class="item">Nagy sor</div>
+                <div class="item">Nagy póker</div>
+            </div>
+            <div class="row items">
+                <div class="item chosen">20</div>
+                <div class="item">40</div>
+                <div class="item">50</div>
+                <div class="item">0</div>
+                <div class="item chosen">50</div>
+                <div class="item">20</div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+            </div>
+        </div>
+        <h2>Játékos pontszáma: ###</h2>
+        <div class="combination">
+            <div class="row">
+                <div class="item">Szemét</div>
+                <div class="item">Pár</div>
+                <div class="item">Drill</div>
+                <div class="item">2 pár</div>
+                <div class="item">Kis póker</div>
+                <div class="item">Full</div>
+                <div class="item">Kis sor</div>
+                <div class="item">Nagy sor</div>
+                <div class="item">Nagy póker</div>
+            </div>
+            <div class="row">
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-container bottom-button">
+        <button>Játék újrakezdése</button>
+    </div>
+
+    <script src="main.js"></script>
 </body>
+
 </html>

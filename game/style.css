@@ -1,0 +1,107 @@
+/* Basic styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Layer styles */
+
+.layer{
+    background-color: #2d3436;
+    background-image: linear-gradient(315deg, #2d3436 0%, #000000 74%);
+    width: 100%;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+/* Random numbers */
+
+.random-numbers{
+    width: 90%;
+    margin: 60px auto;
+    font-size: 32px;
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Button */
+
+.button-container{
+    display: flex;
+    justify-content: center;
+}
+
+.button-container button{
+    outline: none;
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.button-container button:hover{
+    background-color: #fff;
+    color: #2d3436;
+    border: 2px solid #2d3436;
+}
+
+.button-container.bottom-button{
+    margin-top: 0;
+}
+
+/* Combinations table */
+.combinations{
+    width: 95%;
+    margin: 60px auto 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+.combination{
+    width: 100%;
+    height: 200px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+.row{
+    display: flex;
+    height: 50%;
+    width: 100%;
+}
+
+.item{
+    width: 20%;
+    height: 100%;
+    border: 1px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+.row.items .item{
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+}
+
+.item.chosen{
+    cursor: auto !important;
+    color: #fff !important;
+    font-weight: bold;
+}

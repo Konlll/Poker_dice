@@ -1,3 +1,5 @@
+// Score Class
+
 class Scores {
     scores;
 
@@ -13,6 +15,8 @@ class Scores {
         this.scores.set(field_name, this.scores.get(field_name) + score);
     }
 }
+
+// Point Calculator Class
 
 class PointCalculator {
     constructor(throws) {
@@ -82,6 +86,8 @@ class PointCalculator {
     }
 }
 
+// Summarize an array
+
 function sum_arr(arr) {
     let sum = 0;
     for (let i = 0; i < arr.length; i++) {
@@ -89,6 +95,8 @@ function sum_arr(arr) {
     }
     return sum
 }
+
+// Check throw values for each combinations
 
 function check_throw_values(throws) {
     let noDuplicates = Array.from(new Set(throws));
@@ -145,6 +153,8 @@ function check_throw_values(throws) {
     scores.add_score("trash", pc.calculate_trash())
     return scores;
 }
+
+// Get random numbers by throwing
 
 function get_throw() {
     let throws = new Array(5);

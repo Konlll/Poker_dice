@@ -10,16 +10,10 @@
 <body>
     <div class="layer"></div>
 
-    <div class="random-numbers">
-        <span>?</span>
-        <span>?</span>
-        <span>?</span>
-        <span>?</span>
-        <span>?</span>
-    </div>
+    <div class="random-numbers"></div>
 
     <div class="button-container">
-        <button>Random számok generálása</button>
+        <button id="generate">Random számok generálása</button>
     </div>
 
     <div class="combinations">
@@ -36,19 +30,19 @@
                 <div class="item">Nagy sor</div>
                 <div class="item">Nagy póker</div>
             </div>
-            <div class="row items">
-                <div class="item chosen">20</div>
-                <div class="item">40</div>
-                <div class="item">50</div>
-                <div class="item">0</div>
-                <div class="item chosen">50</div>
-                <div class="item">20</div>
+            <div class="row">
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
                 <div class="item"></div>
                 <div class="item"></div>
                 <div class="item"></div>
             </div>
         </div>
-        <h2>Játékos pontszáma: ###</h2>
+        <h2>Játékos pontszáma: <span id="playerScore">0</span></h2>
         <div class="combination">
             <div class="row">
                 <div class="item">Szemét</div>
@@ -61,7 +55,7 @@
                 <div class="item">Nagy sor</div>
                 <div class="item">Nagy póker</div>
             </div>
-            <div class="row">
+            <div class="row items player-items">
                 <div class="item"></div>
                 <div class="item"></div>
                 <div class="item"></div>

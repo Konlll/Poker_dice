@@ -1,3 +1,5 @@
+// Score Class
+
 class Scores {
     scores;
 
@@ -13,6 +15,8 @@ class Scores {
         this.scores.set(field_name, this.scores.get(field_name) + score);
     }
 }
+
+// Point Calculator Class
 
 class PointCalculator {
     constructor(throws) {
@@ -56,8 +60,8 @@ class PointCalculator {
 
     calculate_four_in_row() {
         for (let i = 0; i < this.throws.length; i++) {
-            if (this.throws[i] === this.throws[i+1]) {
-                this.throws.splice(i-1, 1)
+            if (this.throws[i] === this.throws[i + 1]) {
+                this.throws.splice(i - 1, 1)
                 return sum_arr(this.throws)
             }
         }
@@ -82,6 +86,8 @@ class PointCalculator {
     }
 }
 
+// Summarize an array
+
 function sum_arr(arr) {
     let sum = 0;
     for (let i = 0; i < arr.length; i++) {
@@ -89,6 +95,8 @@ function sum_arr(arr) {
     }
     return sum
 }
+
+// Check throw values for each combinations
 
 function check_throw_values(throws) {
     let noDuplicates = Array.from(new Set(throws));
@@ -101,21 +109,21 @@ function check_throw_values(throws) {
     let pc = new PointCalculator(throws);
 
     for (let i = 0; i < throws.length; i++) {
-        if (throws[i] === throws[i+1]) {
+        if (throws[i] === throws[i + 1]) {
             len++;
         } else if (len !== 0) {
-                duplicates.push(len);
-                len = 0;
+            duplicates.push(len);
+            len = 0;
         }
     }
 
     if (noDuplicates.length === 5) {
         if (noDuplicates[0] === 1) {
             scores.add_score('sm_straight', pc.calculate_sm_straight());
-        }if (noDuplicates[0] === 2) {
+        } if (noDuplicates[0] === 2) {
             scores.add_score('lg_straight', pc.calculate_lg_straight());
         }
-    }if (noDuplicates.length === 2) {
+    } if (noDuplicates.length === 2) {
         if (duplicates.length === 2) {
             scores.add_score('two_in_row', pc.calculate_two_in_row());
             scores.add_score("three_in_row", pc.calculate_three_in_row())
@@ -146,10 +154,107 @@ function check_throw_values(throws) {
     return scores;
 }
 
+// Get random numbers by throwing
+
 function get_throw() {
     let throws = new Array(5);
     for (let i = 0; i < 5; i++) {
         throws[i] = Math.floor(Math.random() * 6) + 1;
     }
-     return throws;
+    return throws;
 }
+
+// Get player fields
+
+function getPlayerItems(){
+    const itemsDiv = document.querySelector(".player-items")
+    const playerItems = Object.values(itemsDiv.childNodes).filter(item => {
+        if (item.nodeName != "#text") return item
+    })
+    return playerItems
+}
+
+// Load stored data if exists
+
+function checkStoredValues(){
+    let playerSummary = localStorage.getItem("playerSummary")
+    let playerScores = JSON.parse(localStorage.getItem("playerScores"))
+    if(playerSummary && playerScores){
+        const playerScore = document.querySelector("#playerScore")
+        const playerItems = getPlayerItems()
+        playerScore.innerHTML = playerSummary
+        playerItems.forEach((item, index) => {
+            if(playerScores[index] != undefined){
+                const span = document.createElement("span")
+                span.innerHTML = playerScores[index]
+                span.classList.add("chosen")
+                item.appendChild(span)
+            }
+        })
+
+    }
+}
+
+// InnerHTML every thrown values by clicking
+document.getElementById('generate').addEventListener('click', (e) => {
+    const throwing = get_throw()
+    const randomNumbersDiv = document.querySelector(".random-numbers")
+    randomNumbersDiv.innerHTML = ""
+    for (let i = 0; i < throwing.length; i++) {
+        const span = document.createElement("span")
+        span.innerHTML = throwing[i]
+        randomNumbersDiv.appendChild(span)
+    }
+    e.target.style.display = "none"
+
+    addCalculatedItems(throwing)
+})
+
+// When get_throw() and clicked on generating random numbers, we will adding each combinations to our items
+
+function addCalculatedItems(numbers) {
+    const playerItems = getPlayerItems()
+    const calculatedValues = check_throw_values(numbers).scores
+    const arrayValues = []
+    calculatedValues.forEach((value, key) => {
+        arrayValues.push(value)
+    })
+
+    playerItems.forEach((item, index) => {
+        if (item.childNodes.length == 0) {
+            const span = document.createElement("span")
+            span.innerHTML = arrayValues[index]
+            item.appendChild(span)
+            span.addEventListener("click", () => addChosenValue(playerItems, span, arrayValues[index]))
+        }
+    })
+}
+
+// When a user chose a combination we will summarize that and save as well
+
+function addChosenValue(itemsDiv, element, value) {
+    const score = document.getElementById("playerScore")
+    let scoreValue = parseInt(score.innerHTML)
+    scoreValue += value
+    score.innerHTML = scoreValue
+    element.classList.add("chosen")
+    let playerScores = []
+    itemsDiv.forEach(item => {
+        Object.values(item.childNodes).forEach(span => {
+            if (span.classList.contains("chosen") == false) {
+                span.parentNode.removeChild(span)
+                playerScores.push(undefined)
+            } else{
+                playerScores.push(span.innerHTML)
+            }
+        })
+    })
+    console.log(playerScores)
+    localStorage.setItem('playerScores', JSON.stringify(playerScores))
+    localStorage.setItem("playerSummary", score.innerHTML)
+    // Next row should be deleted in the future
+    document.querySelector("#generate").style.display = "block"
+}
+
+// When page loaded we always should check whether there is stored data or not
+checkStoredValues()

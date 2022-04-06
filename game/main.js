@@ -156,7 +156,7 @@ function check_throw_values(throws) {
 
 // Get random numbers by throwing
 
-function get_throw() {
+function getThrows() {
     let throws = new Array(5);
     for (let i = 0; i < 5; i++) {
         throws[i] = Math.floor(Math.random() * 6) + 1;
@@ -166,8 +166,8 @@ function get_throw() {
 
 // Get player fields
 
-function getPlayerItems(){
-    const itemsDiv = document.querySelector(".player-items")
+function getItems(selector){
+    const itemsDiv = document.querySelector(selector)
     const playerItems = Object.values(itemsDiv.childNodes).filter(item => {
         if (item.nodeName != "#text") return item
     })
@@ -181,7 +181,7 @@ function checkStoredValues(){
     let playerScores = JSON.parse(localStorage.getItem("playerScores"))
     if(playerSummary && playerScores){
         const playerScore = document.querySelector("#playerScore")
-        const playerItems = getPlayerItems()
+        const playerItems = getItems(".player-items")
         playerScore.innerHTML = playerSummary
         playerItems.forEach((item, index) => {
             if(playerScores[index] != undefined){
@@ -195,25 +195,25 @@ function checkStoredValues(){
     }
 }
 
-// InnerHTML every thrown values by clicking
+// Place into InnerHTML the thrown values on clicking
 document.getElementById('generate').addEventListener('click', (e) => {
-    const throwing = get_throw()
+    const throws = getThrows()
     const randomNumbersDiv = document.querySelector(".random-numbers")
     randomNumbersDiv.innerHTML = ""
-    for (let i = 0; i < throwing.length; i++) {
+    for (let i = 0; i < throws.length; i++) {
         const span = document.createElement("span")
-        span.innerHTML = throwing[i]
+        span.innerHTML = throws[i]
         randomNumbersDiv.appendChild(span)
     }
     e.target.style.display = "none"
 
-    addCalculatedItems(throwing)
+    addCalculatedItems(throws)
 })
 
-// When get_throw() and clicked on generating random numbers, we will adding each combinations to our items
+// When the generate button is clicked upon, we will call the getThrows() function and add the combinations to our items
 
 function addCalculatedItems(numbers) {
-    const playerItems = getPlayerItems()
+    const playerItems = getItems(".player-items")
     const calculatedValues = check_throw_values(numbers).scores
     const arrayValues = []
     calculatedValues.forEach((value, key) => {
@@ -230,7 +230,7 @@ function addCalculatedItems(numbers) {
     })
 }
 
-// When a user chose a combination we will summarize that and save as well
+// When the user selects a combination we will summarize that and save as well
 
 function addChosenValue(itemsDiv, element, value) {
     const score = document.getElementById("playerScore")
@@ -249,12 +249,85 @@ function addChosenValue(itemsDiv, element, value) {
             }
         })
     })
-    console.log(playerScores)
     localStorage.setItem('playerScores', JSON.stringify(playerScores))
     localStorage.setItem("playerSummary", score.innerHTML)
     // Next row should be deleted in the future
     document.querySelector("#generate").style.display = "block"
+    ai_move();
 }
+
+
+
+function ai_move() {
+    let throw_score = check_throw_values(getThrows());
+
+    const playerItems = getItems(".ai-items");
+    const calculatedValues = throw_score.scores;
+    const arrayValues = [];
+    calculatedValues.forEach((value, key) => {
+        arrayValues.push(value)
+    })
+
+    let scores = [];
+
+    let addedValue = false;
+
+    let maxIndex = arrayValues.indexOf(Math.max(...arrayValues))
+
+    playerItems.forEach((item, index) => {
+        if (item.childNodes.length != 0) {
+            arrayValues.splice(index, 1, 0);
+            let maxIndex = arrayValues.indexOf(Math.max(...arrayValues))
+            scores.push(item.childNodes[index])
+
+        } else if(maxIndex == index) {
+            const span = document.createElement("span")
+            span.innerHTML = arrayValues[index]
+            span.classList.add("chosen");
+            item.appendChild(span)
+            let icr = 0;
+            aiScore.scores.forEach((value, key) => {
+                if (index == icr) {
+                    aiScore.add_score(key, arrayValues[index]);
+                }
+                icr++;
+            })
+            addedValue = true;
+        }
+    })
+
+    if (addedValue == false) {
+        playerItems.forEach((item, index) => {
+            if (item.childNodes.length == 0 && !addedValue) {
+                const span = document.createElement("span")
+                span.innerHTML = arrayValues[index]
+                span.classList.add("chosen");
+                item.appendChild(span);
+                let icr = 0;
+                aiScore.scores.forEach((value, key) => {
+                    icr++;
+                    if (index == icr) {
+                        aiScore.add_score(key, arrayValues[index]);
+                    }
+                })
+                addedValue = true;
+            }
+
+        })
+    }
+
+    // localStorage.setItem('aiScores', JSON.stringify(scores))
+    // localStorage.setItem("aiSummary", document.getElementById('aiScore').innerHTML)
+
+}
+
+
+function clearData() {
+    localStorage.clear();
+    location.reload();
+}
+
+let aiScore = new Scores();
 
 // When page loaded we always should check whether there is stored data or not
 checkStoredValues()

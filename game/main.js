@@ -106,6 +106,8 @@ class PointCalculator {
     }
 }
 
+let aiScore = [new Scores(), [false, false, false, false, false, false, false, false, false]]
+
 // Summarize an array
 
 function sum_arr(arr) {
@@ -291,7 +293,8 @@ function ai_move() {
         if (curr_score[index] != 0) {
             throw_score.splice(index, 1, 0);
             maxIndex == throw_score.indexOf(Math.max(...curr_score));
-        } else if (!addedScore && throw_score[index] != 0) {
+            console.log(maxIndex)
+        } else if (!addedScore && throw_score[index] != 0 && !aiScore[1][index]) {
             curr_score[index] = throw_score[index];
             aiScore[1][index] = true;
             addedScore = true;
@@ -300,12 +303,9 @@ function ai_move() {
 
     aiScore[0].convertArrToScores(curr_score);
 
-    const playerItems = getItems(".ai-items");
+    const aiItems = getItems(".ai-items");
 
-    playerItems.forEach((item, index) => {
-        console.log(aiScore[1][index]);
-        console.log(item.childNodes.length);
-        console.log(addedScore);
+    aiItems.forEach((item, index) => {
         if (aiScore[1][index] == true && item.childNodes.length == 0) {
             const span = document.createElement("span");
             span.innerHTML = throw_score[index];
@@ -332,8 +332,6 @@ function clearData() {
     localStorage.clear();
     location.reload();
 }
-
-let aiScore = [new Scores(), [false, false, false, false, false, false, false, false, false]]
 
 // When page loaded we always should check whether there is stored data or not
 checkStoredValues()

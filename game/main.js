@@ -14,6 +14,26 @@ class Scores {
     add_score(field_name, score) {
         this.scores.set(field_name, this.scores.get(field_name) + score);
     }
+
+    convertArrToScores(arr) {
+        if (arr.length != 9) {
+            throw new Error("The array length is larger than the length of the max possible score fields.")
+        }
+        let incr = 0;
+        this.scores.forEach((val, index) => {
+            this.scores.set(index, arr[incr]);
+            incr++;
+        })
+    }
+
+    getAsArr() {
+        let arr = [];
+        this.scores.forEach((value, index) => {
+            arr.push(value);
+        })
+        return arr;
+    }
+
 }
 
 // Point Calculator Class
@@ -259,62 +279,48 @@ function addChosenValue(itemsDiv, element, value) {
 
 
 function ai_move() {
-    let throw_score = check_throw_values(getThrows());
+    let throw_score = check_throw_values(getThrows()).getAsArr();
+    let curr_score = aiScore[0].getAsArr();
 
-    const playerItems = getItems(".ai-items");
-    const calculatedValues = throw_score.scores;
-    const arrayValues = [];
-    calculatedValues.forEach((value, key) => {
-        arrayValues.push(value)
-    })
+    let maxIndex = 0;
 
-    let scores = [];
+    let addedScore = false;
 
-    let addedValue = false;
 
-    let maxIndex = arrayValues.indexOf(Math.max(...arrayValues))
-
-    playerItems.forEach((item, index) => {
-        if (item.childNodes.length != 0) {
-            arrayValues.splice(index, 1, 0);
-            let maxIndex = arrayValues.indexOf(Math.max(...arrayValues))
-            scores.push(item.childNodes[index])
-
-        } else if(maxIndex == index) {
-            const span = document.createElement("span")
-            span.innerHTML = arrayValues[index]
-            span.classList.add("chosen");
-            item.appendChild(span)
-            let icr = 0;
-            aiScore.scores.forEach((value, key) => {
-                if (index == icr) {
-                    aiScore.add_score(key, arrayValues[index]);
-                }
-                icr++;
-            })
-            addedValue = true;
+    throw_score.forEach((val, index) => {
+        if (curr_score[index] != 0) {
+            throw_score.splice(index, 1, 0);
+            maxIndex == throw_score.indexOf(Math.max(...curr_score));
+        } else if (!addedScore && throw_score[index] != 0) {
+            curr_score[index] = throw_score[index];
+            aiScore[1][index] = true;
+            addedScore = true;
         }
     })
 
-    if (addedValue == false) {
-        playerItems.forEach((item, index) => {
-            if (item.childNodes.length == 0 && !addedValue) {
-                const span = document.createElement("span")
-                span.innerHTML = arrayValues[index]
-                span.classList.add("chosen");
-                item.appendChild(span);
-                let icr = 0;
-                aiScore.scores.forEach((value, key) => {
-                    icr++;
-                    if (index == icr) {
-                        aiScore.add_score(key, arrayValues[index]);
-                    }
-                })
-                addedValue = true;
-            }
+    aiScore[0].convertArrToScores(curr_score);
 
-        })
-    }
+    const playerItems = getItems(".ai-items");
+
+    playerItems.forEach((item, index) => {
+        console.log(aiScore[1][index]);
+        console.log(item.childNodes.length);
+        console.log(addedScore);
+        if (aiScore[1][index] == true && item.childNodes.length == 0) {
+            const span = document.createElement("span");
+            span.innerHTML = throw_score[index];
+            span.classList.add("chosen");
+            item.appendChild(span)
+        } else if (item.childNodes.length == 0 && !addedScore) {
+            const span = document.createElement("span");
+            span.innerHTML = 0;
+            addedScore = true;
+            aiScore[1][index] = true;
+            span.classList.add("chosen");
+            item.appendChild(span)
+        }
+        
+    })
 
     // localStorage.setItem('aiScores', JSON.stringify(scores))
     // localStorage.setItem("aiSummary", document.getElementById('aiScore').innerHTML)
@@ -327,7 +333,7 @@ function clearData() {
     location.reload();
 }
 
-let aiScore = new Scores();
+let aiScore = [new Scores(), [false, false, false, false, false, false, false, false, false]]
 
 // When page loaded we always should check whether there is stored data or not
 checkStoredValues()

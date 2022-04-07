@@ -288,12 +288,10 @@ function ai_move() {
 
     let addedScore = false;
 
-
     throw_score.forEach((val, index) => {
         if (curr_score[index] != 0) {
             throw_score.splice(index, 1, 0);
             maxIndex == throw_score.indexOf(Math.max(...curr_score));
-            console.log(maxIndex)
         } else if (!addedScore && throw_score[index] != 0 && !aiScore[1][index]) {
             curr_score[index] = throw_score[index];
             aiScore[1][index] = true;
@@ -302,6 +300,14 @@ function ai_move() {
     })
 
     aiScore[0].convertArrToScores(curr_score);
+
+    let scoreVal = 0;
+    
+    for (let i = 0; i < curr_score.length; i++) {
+        scoreVal += curr_score[i];
+    }
+
+    document.getElementById('aiScore').innerHTML = scoreVal;
 
     const aiItems = getItems(".ai-items");
 
@@ -322,7 +328,10 @@ function ai_move() {
         
     })
 
-    // localStorage.setItem('aiScores', JSON.stringify(scores))
+
+
+
+    // localStorage.setItem('aiScores', JSON.stringify())
     // localStorage.setItem("aiSummary", document.getElementById('aiScore').innerHTML)
 
 }

@@ -106,18 +106,19 @@ class PointCalculator {
     }
 }
 
+// Variable for AI scores
+let aiScore = [new Scores(), [false, false, false, false, false, false, false, false, false]]
+
+
 // Get player or ai game fields
 
 const getItems = (selector) => {
     const itemsDiv = document.querySelector(selector)
     const playerItems = Object.values(itemsDiv.childNodes).filter(item => {
-        if (item.nodeName != "#text") return item
+        if (item.nodeName != "#text") return item;
     })
-    return playerItems
+    return playerItems;
 }
-
-// Variable for AI scores
-let aiScore = [new Scores(), [false, false, false, false, false, false, false, false, false]]
 
 // Summarize an array
 
@@ -219,6 +220,33 @@ const checkStoredValues = (scoresStorage, summaryStorage, scoresStorageId, summa
     }
 }
 
+const loadAIData = () => {
+    if (localStorage.getItem('aiScores') != null || localStorage.getItem('aiFields') != null) {
+        aiScore[0].convertArrToScores(JSON.parse(localStorage.getItem(('aiScores'))));
+        aiScore[1] = Array.from(JSON.parse(localStorage.getItem('aiFields')));
+
+        let scoreArr = aiScore[0].getAsArr();
+
+        const aiItems = getItems(".ai-items");
+        aiItems.forEach((item, index) => {
+            if (aiScore[1][index] == true && item.childNodes.length == 0) {
+                const span = document.createElement("span");
+                span.innerHTML = scoreArr[index]
+                span.classList.add("chosen");
+                item.appendChild(span);
+            }
+        })
+
+        let scoreVal = 0;
+
+        for (let i = 0; i < scoreArr.length; i++) {
+            scoreVal += scoreArr[i];
+        }
+
+        document.getElementById('aiScore').innerHTML = scoreVal;
+    }
+}
+
 // Place into InnerHTML the thrown values on clicking
 document.getElementById('generate').addEventListener('click', (e) => {
     const throws = getThrows()
@@ -277,13 +305,13 @@ const addChosenValue = (itemsDiv, element, value) => {
     localStorage.setItem("playerSummary", score.innerHTML)
     document.querySelector("#generate").style.display = "none"
     setTimeout(() => {
-        ai_move();
+        aiMove();
     }, 1500)
 }
 
 // When AI is the next, it chooses the most ideal value
 
-const ai_move = () => {
+const aiMove = () => {
     const throws = getThrows()
     let throw_score = check_throw_values(throws).getAsArr();
     let curr_score = aiScore[0].getAsArr();
@@ -303,54 +331,51 @@ const ai_move = () => {
         randomNumbers.appendChild(span)
     })
 
-    setTimeout(() => {
-        throw_score.forEach((val, index) => {
-            if (curr_score[index] != 0) {
-                throw_score.splice(index, 1, 0);
-                maxIndex == throw_score.indexOf(Math.max(...curr_score));
-            } else if (!addedScore && throw_score[index] != 0 && !aiScore[1][index]) {
-                curr_score[index] = throw_score[index];
-                aiScore[1][index] = true;
-                addedScore = true;
-            }
-        })
-
-        aiScore[0].convertArrToScores(curr_score);
-
-        let scoreVal = parseInt(document.querySelector("#aiScore").innerHTML);
-
-        for (let i = 0; i < curr_score.length; i++) {
-            scoreVal += curr_score[i];
+    throw_score.forEach((val, index) => {
+        if (curr_score[index] != 0) {
+            throw_score.splice(index, 1, 0);
+            maxIndex == throw_score.indexOf(Math.max(...curr_score));
+        } else if (!addedScore && throw_score[index] != 0 && !aiScore[1][index]) {
+            curr_score[index] = throw_score[index];
+            aiScore[1][index] = true;
+            addedScore = true;
         }
+    })
 
-        document.getElementById('aiScore').innerHTML = scoreVal;
+    aiScore[0].convertArrToScores(curr_score);
 
-        const aiItems = getItems(".ai-items");
+    let scoreVal = 0;
 
-        aiItems.forEach((item, index) => {
-            if (aiScore[1][index] == true && item.childNodes.length == 0) {
-                const span = document.createElement("span");
-                span.innerHTML = throw_score[index];
-                span.classList.add("chosen");
-                item.appendChild(span)
-                addAiScores(throw_score[index], scoreVal)
-            } else if (item.childNodes.length == 0 && !addedScore) {
-                const span = document.createElement("span");
-                span.innerHTML = 0;
-                addedScore = true;
-                aiScore[1][index] = true;
-                span.classList.add("chosen");
-                item.appendChild(span)
-                addAiScores(0, scoreVal)
-            }
+    for (let i = 0; i < curr_score.length; i++) {
+        scoreVal += curr_score[i];
+    }
 
-        })
-        if (document.querySelector(".status").innerHTML) {
-            document.querySelector("#generate").style.display = "none"
-        } else {
-            document.querySelector("#generate").style.display = "block"
+    document.getElementById('aiScore').innerHTML = scoreVal;
+
+    const aiItems = getItems(".ai-items");
+
+    aiItems.forEach((item, index) => {
+        if (aiScore[1][index] == true && item.childNodes.length == 0) {
+            const span = document.createElement("span");
+            span.innerHTML = throw_score[index];
+            span.classList.add("chosen");
+            item.appendChild(span)
+            addAiScores(scoreVal)
+        } else if (item.childNodes.length == 0 && !addedScore) {
+            const span = document.createElement("span");
+            span.innerHTML = 0;
+            addedScore = true;
+            aiScore[1][index] = true;
+            span.classList.add("chosen");
+            item.appendChild(span)
+            addAiScores(scoreVal)
         }
-    }, 3000)
+    })
+    if (document.querySelector(".status").innerHTML) {
+        document.querySelector("#generate").style.display = "none"
+    } else {
+        document.querySelector("#generate").style.display = "block"
+    }
 }
 
 // When game ends, get the winner of the game.
@@ -370,14 +395,12 @@ const getWinner = (playerScore, aiScore) => {
 
 // Save AI scores to localStorage
 
-const addAiScores = (score, summary) => {
-    let storageAiScores = JSON.parse(localStorage.getItem('aiScores'));
-    if (storageAiScores == null) storageAiScores = [];
-    storageAiScores.push(score);
+const addAiScores = (summary) => {
     if (!aiScore[1].includes(false)) {
         getWinner(Number.parseInt(JSON.parse(localStorage.getItem('playerScores'))), Number.parseInt(JSON.parse(localStorage.getItem('aiScores'))))
-    };
-    localStorage.setItem("aiScores", JSON.stringify(storageAiScores));
+    }
+    localStorage.setItem("aiScores", JSON.stringify(aiScore[0].getAsArr()));
+    localStorage.setItem("aiFields", JSON.stringify(aiScore[1]));
     localStorage.setItem("aiSummary", summary);
 }
 
@@ -385,7 +408,7 @@ const addAiScores = (score, summary) => {
 
 const downloadPlayerData = () => {
     let array = [];
-    array.push(localStorage.getItem("playerScores"), "\n", localStorage.getItem("playerSummary"), "\n", localStorage.getItem("aiScores"), "\n", localStorage.getItem("aiSummary"))
+    array.push(localStorage.getItem("playerScores"), "\n", localStorage.getItem("playerSummary"), "\n", localStorage.getItem("aiScores"), "\n", localStorage.getItem("aiSummary"), "\n", localStorage.getItem("aiFields"));
     const file = new File(array, `gameSave ${new Date().toLocaleString()}.txt`, {
         type: 'text/plain',
     });
@@ -411,4 +434,4 @@ const clearData = () => {
 
 // When page loaded we always should check whether there is stored data or not
 checkStoredValues("playerScores", "playerSummary", "#playerScore", ".player-items")
-checkStoredValues("aiScores", "aiSummary", "#aiScore", ".ai-items")
+loadAIData()

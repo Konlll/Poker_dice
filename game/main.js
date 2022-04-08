@@ -187,7 +187,7 @@ const check_throw_values = (throws) => {
     return scores;
 }
 
-// Get random numbers by throwing
+// Generate the random numbers, as if you would throw the cubes
 
 const getThrows = () => {
     let throws = new Array(5);
@@ -353,7 +353,7 @@ const ai_move = () => {
     }, 3000)
 }
 
-// When game ends we will get the winner of the game.
+// When game ends, get the winner of the game.
 
 const getWinner = (playerScore, aiScore) => {
     document.querySelector("#generate").style.display = "none"
@@ -381,7 +381,7 @@ const addAiScores = (score, summary) => {
     localStorage.setItem("aiSummary", summary);
 }
 
-// Download datas of the game.
+// Download the game data
 
 const downloadPlayerData = () => {
     let array = [];

@@ -198,17 +198,17 @@ function getItems(selector){
 
 // Load stored data if exists
 
-function checkStoredValues(){
-    let playerSummary = localStorage.getItem("playerSummary")
-    let playerScores = JSON.parse(localStorage.getItem("playerScores"))
-    if(playerSummary && playerScores){
-        const playerScore = document.querySelector("#playerScore")
-        const playerItems = getItems(".player-items")
-        playerScore.innerHTML = playerSummary
+function checkStoredValues(scoresStorage, summaryStorage, scoresStorageId, summaryStorageId){
+    let summary = localStorage.getItem(summaryStorage)
+    let scores = JSON.parse(localStorage.getItem(scoresStorage))
+    if(summary && scores){
+        const playerScore = document.querySelector(scoresStorageId)
+        const playerItems = getItems(summaryStorageId)
+        playerScore.innerHTML = summary
         playerItems.forEach((item, index) => {
-            if(playerScores[index] != undefined){
+            if(scores[index] != undefined){
                 const span = document.createElement("span")
-                span.innerHTML = playerScores[index]
+                span.innerHTML = scores[index]
                 span.classList.add("chosen")
                 item.appendChild(span)
             }
@@ -317,6 +317,7 @@ function ai_move() {
             span.innerHTML = throw_score[index];
             span.classList.add("chosen");
             item.appendChild(span)
+            addAiScores(throw_score[index], scoreVal)
         } else if (item.childNodes.length == 0 && !addedScore) {
             const span = document.createElement("span");
             span.innerHTML = 0;
@@ -324,16 +325,23 @@ function ai_move() {
             aiScore[1][index] = true;
             span.classList.add("chosen");
             item.appendChild(span)
+            addAiScores(0, scoreVal)
         }
         
     })
 
 
-
-
     // localStorage.setItem('aiScores', JSON.stringify())
     // localStorage.setItem("aiSummary", document.getElementById('aiScore').innerHTML)
 
+}
+
+function addAiScores(score, summary){
+    let storageAiScores = JSON.parse(localStorage.getItem('aiScores'))
+    if (storageAiScores == null) storageAiScores = []
+    storageAiScores.push(score)
+    localStorage.setItem("aiScores", JSON.stringify(storageAiScores))
+    localStorage.setItem("aiSummary", summary)
 }
 
 
@@ -343,4 +351,5 @@ function clearData() {
 }
 
 // When page loaded we always should check whether there is stored data or not
-checkStoredValues()
+checkStoredValues("playerScores", "playerSummary", "#playerScore", ".player-items")
+checkStoredValues("aiScores", "aiSummary", "#aiScore", ".ai-items")

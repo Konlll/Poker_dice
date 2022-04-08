@@ -343,13 +343,25 @@ function ai_move() {
             
         })
     }, 3000)
+}
 
+function getWinner(playerScore, aiScore) {
+    if (aiScore > playerScore) {
+        alert("A gép nyert ellened!")
+    } else if (aiScore == playerScore) {
+        alert("Az eredmény döntetlen!")
+    } else {
+        alert("Nyertél! Gratulálunk!")
+    }
 }
 
 function addAiScores(score, summary){
     let storageAiScores = JSON.parse(localStorage.getItem('aiScores'))
     if (storageAiScores == null) storageAiScores = []
     storageAiScores.push(score)
+    if (!aiScore[1].includes(false)) {
+        getWinner(Number.parseInt(JSON.parse(localStorage.getItem('playerScores'))), Number.parseInt(JSON.parse(localStorage.getItem('aiScores'))))
+    }
     localStorage.setItem("aiScores", JSON.stringify(storageAiScores))
     localStorage.setItem("aiSummary", summary)
 }

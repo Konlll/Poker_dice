@@ -281,58 +281,68 @@ function addChosenValue(itemsDiv, element, value) {
 
 
 function ai_move() {
-    let throw_score = check_throw_values(getThrows()).getAsArr();
+    const throws = getThrows()
+    let throw_score = check_throw_values(throws).getAsArr();
     let curr_score = aiScore[0].getAsArr();
 
     let maxIndex = 0;
 
     let addedScore = false;
 
-    throw_score.forEach((val, index) => {
-        if (curr_score[index] != 0) {
-            throw_score.splice(index, 1, 0);
-            maxIndex == throw_score.indexOf(Math.max(...curr_score));
-        } else if (!addedScore && throw_score[index] != 0 && !aiScore[1][index]) {
-            curr_score[index] = throw_score[index];
-            aiScore[1][index] = true;
-            addedScore = true;
-        }
-    })
-
-    aiScore[0].convertArrToScores(curr_score);
-
-    let scoreVal = 0;
-    
-    for (let i = 0; i < curr_score.length; i++) {
-        scoreVal += curr_score[i];
+    let randomNumbers = document.querySelector(".random-numbers")
+    while(randomNumbers.firstChild){
+        randomNumbers.removeChild(randomNumbers.lastChild)
     }
 
-    document.getElementById('aiScore').innerHTML = scoreVal;
-
-    const aiItems = getItems(".ai-items");
-
-    aiItems.forEach((item, index) => {
-        if (aiScore[1][index] == true && item.childNodes.length == 0) {
-            const span = document.createElement("span");
-            span.innerHTML = throw_score[index];
-            span.classList.add("chosen");
-            item.appendChild(span)
-            addAiScores(throw_score[index], scoreVal)
-        } else if (item.childNodes.length == 0 && !addedScore) {
-            const span = document.createElement("span");
-            span.innerHTML = 0;
-            addedScore = true;
-            aiScore[1][index] = true;
-            span.classList.add("chosen");
-            item.appendChild(span)
-            addAiScores(0, scoreVal)
-        }
-        
+    throws.forEach((value, index) => {
+        const span = document.createElement("span")
+        span.innerHTML = throws[index]
+        randomNumbers.appendChild(span)
     })
-
-
-    // localStorage.setItem('aiScores', JSON.stringify())
-    // localStorage.setItem("aiSummary", document.getElementById('aiScore').innerHTML)
+    
+    setTimeout(() => {
+        throw_score.forEach((val, index) => {
+            if (curr_score[index] != 0) {
+                throw_score.splice(index, 1, 0);
+                maxIndex == throw_score.indexOf(Math.max(...curr_score));
+            } else if (!addedScore && throw_score[index] != 0 && !aiScore[1][index]) {
+                curr_score[index] = throw_score[index];
+                aiScore[1][index] = true;
+                addedScore = true;
+            }
+        })
+    
+        aiScore[0].convertArrToScores(curr_score);
+    
+        let scoreVal = 0;
+        
+        for (let i = 0; i < curr_score.length; i++) {
+            scoreVal += curr_score[i];
+        }
+    
+        document.getElementById('aiScore').innerHTML = scoreVal;
+    
+        const aiItems = getItems(".ai-items");
+    
+        aiItems.forEach((item, index) => {
+            if (aiScore[1][index] == true && item.childNodes.length == 0) {
+                const span = document.createElement("span");
+                span.innerHTML = throw_score[index];
+                span.classList.add("chosen");
+                item.appendChild(span)
+                addAiScores(throw_score[index], scoreVal)
+            } else if (item.childNodes.length == 0 && !addedScore) {
+                const span = document.createElement("span");
+                span.innerHTML = 0;
+                addedScore = true;
+                aiScore[1][index] = true;
+                span.classList.add("chosen");
+                item.appendChild(span)
+                addAiScores(0, scoreVal)
+            }
+            
+        })
+    }, 3000)
 
 }
 

@@ -356,16 +356,34 @@ function getWinner(playerScore, aiScore) {
 }
 
 function addAiScores(score, summary){
-    let storageAiScores = JSON.parse(localStorage.getItem('aiScores'))
-    if (storageAiScores == null) storageAiScores = []
-    storageAiScores.push(score)
+    let storageAiScores = JSON.parse(localStorage.getItem('aiScores'));
+    if (storageAiScores == null) storageAiScores = [];
+    storageAiScores.push(score);
     if (!aiScore[1].includes(false)) {
         getWinner(Number.parseInt(JSON.parse(localStorage.getItem('playerScores'))), Number.parseInt(JSON.parse(localStorage.getItem('aiScores'))))
-    }
-    localStorage.setItem("aiScores", JSON.stringify(storageAiScores))
-    localStorage.setItem("aiSummary", summary)
+    };
+    localStorage.setItem("aiScores", JSON.stringify(storageAiScores));
+    localStorage.setItem("aiSummary", summary);
 }
 
+function downloadPlayerData() {
+    let array = [];
+    array.push(localStorage.getItem("playerScores"), localStorage.getItem("playerSummary"), localStorage.getItem("aiScores"), localStorage.getItem("aiSummary"))
+    const file = new File(array, `${new Date().toLocaleString()}.txt`, {
+        type: 'text/plain',
+    });
+
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(file);
+
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+}
 
 function clearData() {
     localStorage.clear();

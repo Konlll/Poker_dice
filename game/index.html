@@ -17,7 +17,7 @@
     </div>
 
     <div class="combinations">
-        <h2>Számítógép pontszáma: ###</h2>
+        <h2>Számítógép pontszáma: <span id="aiScore">0</span></h2>
         <div class="combination">
             <div class="row">
                 <div class="item">Szemét</div>
@@ -30,7 +30,7 @@
                 <div class="item">Nagy sor</div>
                 <div class="item">Nagy póker</div>
             </div>
-            <div class="row">
+            <div class="row items ai-items">
                 <div class="item"></div>
                 <div class="item"></div>
                 <div class="item"></div>
@@ -70,7 +70,8 @@
     </div>
 
     <div class="button-container bottom-button">
-        <button>Játék újrakezdése</button>
+        <button onclick="clearData()">Játék újrakezdése</button>
+        <button onclick="downloadPlayerData()">Játékadatok letöltése</button>
     </div>
 
     <script src="main.js"></script>

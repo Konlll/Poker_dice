@@ -14,6 +14,26 @@ class Scores {
     add_score(field_name, score) {
         this.scores.set(field_name, this.scores.get(field_name) + score);
     }
+
+    convertArrToScores(arr) {
+        if (arr.length != 9) {
+            throw new Error("The array length is larger than the length of the max possible score fields.")
+        }
+        let incr = 0;
+        this.scores.forEach((val, index) => {
+            this.scores.set(index, arr[incr]);
+            incr++;
+        })
+    }
+
+    getAsArr() {
+        let arr = [];
+        this.scores.forEach((value, index) => {
+            arr.push(value);
+        })
+        return arr;
+    }
+
 }
 
 // Point Calculator Class
@@ -86,6 +106,8 @@ class PointCalculator {
     }
 }
 
+let aiScore = [new Scores(), [false, false, false, false, false, false, false, false, false]]
+
 // Summarize an array
 
 function sum_arr(arr) {
@@ -156,7 +178,7 @@ function check_throw_values(throws) {
 
 // Get random numbers by throwing
 
-function get_throw() {
+function getThrows() {
     let throws = new Array(5);
     for (let i = 0; i < 5; i++) {
         throws[i] = Math.floor(Math.random() * 6) + 1;
@@ -166,8 +188,8 @@ function get_throw() {
 
 // Get player fields
 
-function getPlayerItems(){
-    const itemsDiv = document.querySelector(".player-items")
+function getItems(selector){
+    const itemsDiv = document.querySelector(selector)
     const playerItems = Object.values(itemsDiv.childNodes).filter(item => {
         if (item.nodeName != "#text") return item
     })
@@ -176,17 +198,17 @@ function getPlayerItems(){
 
 // Load stored data if exists
 
-function checkStoredValues(){
-    let playerSummary = localStorage.getItem("playerSummary")
-    let playerScores = JSON.parse(localStorage.getItem("playerScores"))
-    if(playerSummary && playerScores){
-        const playerScore = document.querySelector("#playerScore")
-        const playerItems = getPlayerItems()
-        playerScore.innerHTML = playerSummary
+function checkStoredValues(scoresStorage, summaryStorage, scoresStorageId, summaryStorageId){
+    let summary = localStorage.getItem(summaryStorage)
+    let scores = JSON.parse(localStorage.getItem(scoresStorage))
+    if(summary && scores){
+        const playerScore = document.querySelector(scoresStorageId)
+        const playerItems = getItems(summaryStorageId)
+        playerScore.innerHTML = summary
         playerItems.forEach((item, index) => {
-            if(playerScores[index] != undefined){
+            if(scores[index] != undefined){
                 const span = document.createElement("span")
-                span.innerHTML = playerScores[index]
+                span.innerHTML = scores[index]
                 span.classList.add("chosen")
                 item.appendChild(span)
             }
@@ -195,25 +217,25 @@ function checkStoredValues(){
     }
 }
 
-// InnerHTML every thrown values by clicking
+// Place into InnerHTML the thrown values on clicking
 document.getElementById('generate').addEventListener('click', (e) => {
-    const throwing = get_throw()
+    const throws = getThrows()
     const randomNumbersDiv = document.querySelector(".random-numbers")
     randomNumbersDiv.innerHTML = ""
-    for (let i = 0; i < throwing.length; i++) {
+    for (let i = 0; i < throws.length; i++) {
         const span = document.createElement("span")
-        span.innerHTML = throwing[i]
+        span.innerHTML = throws[i]
         randomNumbersDiv.appendChild(span)
     }
     e.target.style.display = "none"
 
-    addCalculatedItems(throwing)
+    addCalculatedItems(throws)
 })
 
-// When get_throw() and clicked on generating random numbers, we will adding each combinations to our items
+// When the generate button is clicked upon, we will call the getThrows() function and add the combinations to our items
 
 function addCalculatedItems(numbers) {
-    const playerItems = getPlayerItems()
+    const playerItems = getItems(".player-items")
     const calculatedValues = check_throw_values(numbers).scores
     const arrayValues = []
     calculatedValues.forEach((value, key) => {
@@ -230,7 +252,7 @@ function addCalculatedItems(numbers) {
     })
 }
 
-// When a user chose a combination we will summarize that and save as well
+// When the user selects a combination we will summarize that and save as well
 
 function addChosenValue(itemsDiv, element, value) {
     const score = document.getElementById("playerScore")
@@ -249,12 +271,125 @@ function addChosenValue(itemsDiv, element, value) {
             }
         })
     })
-    console.log(playerScores)
     localStorage.setItem('playerScores', JSON.stringify(playerScores))
     localStorage.setItem("playerSummary", score.innerHTML)
     // Next row should be deleted in the future
     document.querySelector("#generate").style.display = "block"
+    ai_move();
+}
+
+
+
+function ai_move() {
+    const throws = getThrows()
+    let throw_score = check_throw_values(throws).getAsArr();
+    let curr_score = aiScore[0].getAsArr();
+
+    let maxIndex = 0;
+
+    let addedScore = false;
+
+    let randomNumbers = document.querySelector(".random-numbers")
+    while(randomNumbers.firstChild){
+        randomNumbers.removeChild(randomNumbers.lastChild)
+    }
+
+    throws.forEach((value, index) => {
+        const span = document.createElement("span")
+        span.innerHTML = throws[index]
+        randomNumbers.appendChild(span)
+    })
+    
+    setTimeout(() => {
+        throw_score.forEach((val, index) => {
+            if (curr_score[index] != 0) {
+                throw_score.splice(index, 1, 0);
+                maxIndex == throw_score.indexOf(Math.max(...curr_score));
+            } else if (!addedScore && throw_score[index] != 0 && !aiScore[1][index]) {
+                curr_score[index] = throw_score[index];
+                aiScore[1][index] = true;
+                addedScore = true;
+            }
+        })
+    
+        aiScore[0].convertArrToScores(curr_score);
+    
+        let scoreVal = 0;
+        
+        for (let i = 0; i < curr_score.length; i++) {
+            scoreVal += curr_score[i];
+        }
+    
+        document.getElementById('aiScore').innerHTML = scoreVal;
+    
+        const aiItems = getItems(".ai-items");
+    
+        aiItems.forEach((item, index) => {
+            if (aiScore[1][index] == true && item.childNodes.length == 0) {
+                const span = document.createElement("span");
+                span.innerHTML = throw_score[index];
+                span.classList.add("chosen");
+                item.appendChild(span)
+                addAiScores(throw_score[index], scoreVal)
+            } else if (item.childNodes.length == 0 && !addedScore) {
+                const span = document.createElement("span");
+                span.innerHTML = 0;
+                addedScore = true;
+                aiScore[1][index] = true;
+                span.classList.add("chosen");
+                item.appendChild(span)
+                addAiScores(0, scoreVal)
+            }
+            
+        })
+    }, 3000)
+}
+
+function getWinner(playerScore, aiScore) {
+    if (aiScore > playerScore) {
+        alert("A gép nyert ellened!")
+    } else if (aiScore == playerScore) {
+        alert("Az eredmény döntetlen!")
+    } else {
+        alert("Nyertél! Gratulálunk!")
+    }
+}
+
+function addAiScores(score, summary){
+    let storageAiScores = JSON.parse(localStorage.getItem('aiScores'));
+    if (storageAiScores == null) storageAiScores = [];
+    storageAiScores.push(score);
+    if (!aiScore[1].includes(false)) {
+        getWinner(Number.parseInt(JSON.parse(localStorage.getItem('playerSummary'))), Number.parseInt(JSON.parse(localStorage.getItem('aiSummary'))))
+    };
+    localStorage.setItem("aiScores", JSON.stringify(storageAiScores));
+    localStorage.setItem("aiSummary", summary);
+}
+
+function downloadPlayerData() {
+    let array = [];
+    array.push(localStorage.getItem("playerScores"),"\n", localStorage.getItem("playerSummary"),"\n", localStorage.getItem("aiScores"),"\n", localStorage.getItem("aiSummary"))
+    const file = new File(array, `gameSave ${new Date().toLocaleString()}.txt`, {
+        type: 'text/plain',
+    });
+
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(file);
+
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+}
+
+function clearData() {
+    localStorage.clear();
+    location.reload();
 }
 
 // When page loaded we always should check whether there is stored data or not
-checkStoredValues()
+checkStoredValues("playerScores", "playerSummary", "#playerScore", ".player-items")
+checkStoredValues("aiScores", "aiSummary", "#aiScore", ".ai-items")

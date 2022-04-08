@@ -368,7 +368,7 @@ function addAiScores(score, summary){
 
 function downloadPlayerData() {
     let array = [];
-    array.push(localStorage.getItem("playerScores"), localStorage.getItem("playerSummary"), localStorage.getItem("aiScores"), localStorage.getItem("aiSummary"))
+    array.push(localStorage.getItem("playerScores"),"\n", localStorage.getItem("playerSummary"),"\n", localStorage.getItem("aiScores"),"\n", localStorage.getItem("aiSummary"))
     const file = new File(array, `gameSave ${new Date().toLocaleString()}.txt`, {
         type: 'text/plain',
     });

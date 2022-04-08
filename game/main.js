@@ -360,7 +360,7 @@ function addAiScores(score, summary){
     if (storageAiScores == null) storageAiScores = [];
     storageAiScores.push(score);
     if (!aiScore[1].includes(false)) {
-        getWinner(Number.parseInt(JSON.parse(localStorage.getItem('playerScores'))), Number.parseInt(JSON.parse(localStorage.getItem('aiScores'))))
+        getWinner(Number.parseInt(JSON.parse(localStorage.getItem('playerSummary'))), Number.parseInt(JSON.parse(localStorage.getItem('aiSummary'))))
     };
     localStorage.setItem("aiScores", JSON.stringify(storageAiScores));
     localStorage.setItem("aiSummary", summary);
